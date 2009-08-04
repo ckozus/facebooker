@@ -221,6 +221,12 @@ module Facebooker
         attr_accessor :mobile_profile
         attr_accessor :profile_main
       end
+      class Page
+        attr_accessor :profile
+        attr_accessor :profile_action
+        attr_accessor :mobile_profile
+        attr_accessor :profile_main
+      end
       class Ref
         attr_accessor :handle
         attr_accessor :fbml
@@ -276,6 +282,8 @@ module Facebooker
           Email.new
         when :profile
           Profile.new
+        when :page
+          Page.new
         when :ref
           Ref.new
         when :user_action
@@ -369,7 +377,7 @@ module Facebooker
         end
         # notifications can 
         # omit the from address
-        raise InvalidSender.new("Sender must be a Facebooker::User") unless from.is_a?(Facebooker::User) || !requires_from_user?(from,_body)
+        raise InvalidSender.new("Sender must be a Facebooker::User") unless from.is_a?(Facebooker::User) || from.is_a?(Facebooker::Page) || !requires_from_user?(from,_body)
         case _body
         when Facebooker::Feed::TemplatizedAction,Facebooker::Feed::Action
           from.publish_action(_body)
@@ -382,7 +390,7 @@ module Facebooker
                                              _body.title, 
                                              _body.text, 
                                              _body.fbml)
-        when Profile
+        when Profile, Page
          # If recipient and from aren't the same person, create a new user object using the
          # userid from recipient and the session from from
          @from = Facebooker::User.new(Facebooker::User.cast_to_facebook_id(@recipients.first),Facebooker::Session.create) 

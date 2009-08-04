@@ -40,5 +40,10 @@ module Facebooker
     def user_is_fan?(user)
       Session.current.post('facebook.pages.isFan', :page_id=>self.page_id, :uid=>Facebooker::User.cast_to_facebook_id(user))
     end
+
+    def facebook_id
+      page_id
+    end
+
   end
 end
